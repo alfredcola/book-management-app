@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <h1>Register</h1>
+  <% if (error) { %>
+    <div style="color: red;">
+      <p><%= error %></p>
+    </div>
+  <% } %>
+  <form action="/register" method="POST">
+    <input type="text" name="username" placeholder="Username" required><br>
+    <input type="password" name="password" placeholder="Password" required><br>
+    <select name="role">
+      <option value="reader">Reader</option>
+      <option value="admin">Admin</option>
+    </select><br>
+    <button type="submit">Register</button>
+  </form>
+  <p>Already have an account? <a href="/login">Login</a></p>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add New Book</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <h1>Add New Book</h1>
+  <a href="/logout">Logout</a>
+  <% if (errors && errors.length > 0) { %>
+    <div style="color: red;">
+      <% errors.forEach(error => { %>
+        <p><%= error %></p>
+      <% }); %>
+    </div>
+  <% } %>
+  <form action="/books" method="post">
+    <label>Title:</label><input type="text" name="title" value="<%= book ? book.title : '' %>" required><br>
+    <label>Author:</label><input type="text" name="author" value="<%= book ? book.author : '' %>" required><br>
+    <label>Year:</label><input type="number" name="year" value="<%= book ? book.year : '' %>"><br>
+    <label>Genre:</label><input type="text" name="genre" value="<%= book ? book.genre : '' %>"><br>
+    <button type="submit">Add Book</button>
+  </form>
+  <a href="/books">Back to Books</a>
+</body>
+</html>
