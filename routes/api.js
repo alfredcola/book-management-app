@@ -2,29 +2,59 @@ const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
 
-// 讀取 (GET)
 router.get('/books', async (req, res) => {
-  const books = await Book.find();
-  res.json(books);
+  try {
+    const books = await Book.find();
+    res.status(200).json(books);
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching books: ' + err.message });
+  }
 });
 
-// 建立 (POST)
 router.post('/books', async (req, res) => {
-  const book = new Book(req.body);
-  await book.save();
-  res.json(book);
+  const { title, author, year, genre } = req.body;
+  if (!title || !author) {
+    return res.status(400).json({ error: 'Title and author are required' });
+  }
+  try {
+    const book = new Book({ title, author, year, genre });
+    await book.save();
+    res.status(201).json(book); 
+  } catch (err) {
+    res.status(500).json({ error: 'Error saving book: ' + err.message });
+  }
 });
 
-// 更新 (PUT)
 router.put('/books/:id', async (req, res) => {
-  const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(book);
+  const { title, author, year, genre } = req.body;
+  if (!title || !author) {
+    return res.status(400).json({ error: 'Title and author are required' });
+  }
+  try {
+    const book = await Book.findByIdAndUpdate(
+      req.params.id,
+      { title, author, year, genre },
+      { new: true, runValidators: true } 
+    );
+    if (!book) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+    res.status(200).json(book);
+  } catch (err) {
+    res.status(500).json({ error: 'Error updating book: ' + err.message });
+  }
 });
 
-// 刪除 (DELETE)
 router.delete('/books/:id', async (req, res) => {
-  await Book.findByIdAndDelete(req.params.id);
-  res.json({ message: '已刪除' });
+  try {
+    const book = await Book.findByIdAndDelete(req.params.id);
+    if (!book) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+    res.status(200).json({ message: '已刪除' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error deleting book: ' + err.message });
+  }
 });
 
 module.exports = router;
