@@ -78,4 +78,38 @@ router.get('/books/search/:keyword', async (req, res) => {
   }
 });
 
+router.get('/books/title/:title', async (req, res) => {
+  try {
+    const books = await Book.find({ title: req.params.title });
+    if (books.length === 0) return res.status(404).json({ message: "Book not found" });
+    res.status(200).json(books[0]); // return first match
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/books/title/:title', async (req, res) => {
+  try {
+    const updated = await Book.findOneAndUpdate(
+      { title: req.params.title },
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updated) return res.status(404).json({ message: "Book not found" });
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/books/title/:title', async (req, res) => {
+  try {
+    const deleted = await Book.findOneAndDelete({ title: req.params.title });
+    if (!deleted) return res.status(404).json({ message: "Book not found" });
+    res.status(200).json({ message: "Deleted successfully", deleted });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
