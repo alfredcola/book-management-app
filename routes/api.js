@@ -51,9 +51,30 @@ router.delete('/books/:id', async (req, res) => {
     if (!book) {
       return res.status(404).json({ error: 'Book not found' });
     }
-    res.status(200).json({ message: '已刪除' });
+    res.status(200).json({ message: 'removed' });
   } catch (err) {
     res.status(500).json({ error: 'Error deleting book: ' + err.message });
+  }
+});
+
+router.get('/books/title/:title', async (req, res) => {
+  try {
+    const books = await Book.find({ title: req.params.title });
+    res.status(200).json(books);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/books/search/:keyword', async (req, res) => {
+  try {
+    const keyword = req.params.keyword;
+    const books = await Book.find({
+      title: { $regex: keyword, $options: 'i' }
+    });
+    res.status(200).json(books);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
